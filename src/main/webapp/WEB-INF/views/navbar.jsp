@@ -17,10 +17,10 @@
     </a>
 
     <%-- Location Selector Button --%>
-    <button class="btn btn-secondary btn-sm" id="navLocationBtn" style="border-radius: var(--radius-pill); background-color: var(--bg-subtle); display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 0.85rem;" onclick="openLocationModal()">
-      <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i>
-      <span id="currentLocDisplay">Jubilee Hills, Hyderabad</span>
-      <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
+    <button class="nav-location-btn" id="navLocationBtn" onclick="openLocationModal()">
+      <i class="fa-solid fa-location-dot"></i>
+      <span id="currentLocDisplay" class="location-text">Jubilee Hills, Hyderabad</span>
+      <i class="fa-solid fa-chevron-down" class="location-chevron"></i>
     </button>
 
     <%-- Main Navigation Links --%>
@@ -116,7 +116,7 @@
       </select>
     </div>
 
-    <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+    <div class="location-modal-actions">
       <button class="btn btn-secondary" style="flex: 1;" onclick="viewAllLocations()">View All Restaurants</button>
       <button class="btn btn-primary" style="flex: 1;" onclick="saveSelectedLocation()">Set Location</button>
     </div>

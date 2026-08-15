@@ -331,14 +331,17 @@
   font-size: 0.85rem;
   font-weight: 600;
   border-radius: var(--radius-pill);
+  border: 1px solid transparent;
   color: var(--text-muted);
   transition: var(--transition-fast);
+  background: transparent;
 }
 
 .tab-btn.active {
   background-color: var(--bg-surface);
   color: var(--primary);
   box-shadow: var(--shadow-sm);
+  border-color: rgba(255, 88, 75, 0.2);
 }
 
 .restaurant-grid {
@@ -491,11 +494,41 @@
   background-color: var(--primary-light);
 }
 
+.address-card.selected {
+  border-color: var(--primary);
+  background: rgba(255, 87, 75, 0.08);
+  box-shadow: 0 0 0 1px rgba(255, 87, 75, 0.2);
+}
+
+.address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.payment-method-grid {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .payment-tab-content {
   margin-top: 1.5rem;
   padding: 1.5rem;
   background-color: var(--bg-subtle);
   border-radius: var(--radius-md);
+}
+
+.field-error {
+  display: none;
+  margin-top: 0.75rem;
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.field-error.visible {
+  display: block;
 }
 
 /* ================= 6. TRACK ORDER ================= */
@@ -604,4 +637,90 @@
   .tracker-timeline { flex-direction: column; gap: 2rem; }
   .tracker-timeline::before { display: none; }
   .tracker-timeline-progress { display: none; }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .checkout-grid {
+    gap: 1.5rem;
+    padding-top: 2rem;
+  }
+
+  .summary-card, .cart-table-card {
+    padding: 1.25rem;
+  }
+
+  .summary-total {
+    font-size: 1.1rem;
+  }
+
+  .payment-method-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .tab-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .chat-drawer {
+    right: 12px;
+    bottom: 80px;
+    width: calc(100vw - 24px);
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .app-download-banner {
+    padding: 2rem 1.25rem;
+    margin: 2.5rem 0;
+  }
+
+  .app-download-content h2 {
+    font-size: clamp(1.8rem, 6vw, 2.3rem);
+  }
+
+  .app-download-content p {
+    font-size: 0.98rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .app-store-btns {
+    flex-direction: column;
+  }
+
+  .app-store-btns .app-btn {
+    justify-content: center;
+  }
+
+  .app-download-banner img {
+    max-width: 180px;
+  }
+
+  .payment-tab-content {
+    padding: 1rem;
+  }
+
+  .address-card {
+    padding: 1rem;
+  }
+
+  .delivery-partner-card .delivery-actions {
+    flex-direction: column;
+  }
+
+  .delivery-partner-card .delivery-actions .btn {
+    width: 100%;
+  }
 }

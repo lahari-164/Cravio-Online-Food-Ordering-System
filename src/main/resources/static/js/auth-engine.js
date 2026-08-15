@@ -61,6 +61,11 @@
 
   function saveAddresses(list) {
     localStorage.setItem(ADDRESS_KEY, JSON.stringify(list));
+    window.dispatchEvent(new CustomEvent('cravio:addresses-updated'));
+  }
+
+  function notifyAddressChanged() {
+    window.dispatchEvent(new CustomEvent('cravio:addresses-updated'));
   }
 
   function loginUser(name, email, phone) {
@@ -407,6 +412,11 @@
     if (window.CravioToast) window.CravioToast('Address saved successfully!', 'success');
   }
 
+  function syncAddressChange() {
+    renderProfileAddresses();
+    notifyAddressChanged();
+  }
+
   function deleteAddress(id) {
     let list = getAddresses();
     list = list.filter(a => a.id !== id);
@@ -445,6 +455,12 @@
         if (e.target === profileOverlay) closeProfileModal();
       });
     }
+
+    window.addEventListener('cravio:addresses-updated', () => {
+      if (window.renderCheckoutAddresses) {
+        window.renderCheckoutAddresses();
+      }
+    });
 
     // Attach Auth form submit listeners
     const formLogin = document.getElementById('formLogin');

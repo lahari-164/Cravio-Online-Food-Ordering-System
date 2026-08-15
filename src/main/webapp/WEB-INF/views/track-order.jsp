@@ -76,11 +76,11 @@
     <!-- RIGHT: DELIVERY PARTNER CARD & ORDER SUMMARY -->
     <div>
       <!-- INDIAN DELIVERY PARTNER CARD -->
-      <div class="summary-card" style="margin-bottom: 2rem;">
+      <div class="summary-card delivery-partner-card" style="margin-bottom: 2rem;">
         <h3 style="font-size: 1.25rem; margin-bottom: 1.25rem;">Delivery Partner</h3>
         
         <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.25rem;">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" id="riderPhoto" alt="Delivery Partner" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
+          <div id="riderPhoto" style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #FF3B30 0%, #FF6B4A 100%); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid var(--primary); font-size: 1.15rem;">RS</div>
           <div>
             <h4 style="font-size: 1.15rem; font-weight: 700;" id="riderName">Rahul Sharma</h4>
             <div style="font-size: 0.85rem; color: var(--text-muted);" id="riderRating"><i class="fa-solid fa-star" style="color: #FFB800;"></i> 4.9 (450+ deliveries)</div>
@@ -88,11 +88,11 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 0.75rem;">
-          <a href="tel:+919876543210" id="riderCallBtn" class="btn" style="flex: 1; background: #10B981; color: #FFF; text-align: center; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+        <div class="delivery-actions" style="display: flex; gap: 0.75rem; flex-wrap: wrap; width: 100%;">
+          <a href="tel:+919876543210" id="riderCallBtn" class="btn" style="flex: 1; min-width: 180px; background: #10B981; color: #FFF; text-align: center; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
             <i class="fa-solid fa-phone"></i> Call Rahul
           </a>
-          <button onclick="openRiderChat()" class="btn btn-secondary" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <button onclick="openRiderChat()" class="btn btn-secondary" style="flex: 1; min-width: 180px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
             <i class="fa-solid fa-comments"></i> Chat
           </button>
         </div>
