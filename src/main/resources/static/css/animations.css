@@ -1,0 +1,75 @@
+@charset "ISO-8859-1";
+/* ==========================================================================
+   CRAVIO ANIMATIONS & TRANSITIONS
+   Keyframes for hero slider, pulse glows, floating icons, timeline dots
+   ========================================================================== */
+
+/* Hero Floating Animation */
+@keyframes floatAnimation {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float {
+  animation: floatAnimation 4s ease-in-out infinite;
+}
+
+/* Pulse Glow Effect */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(255, 59, 48, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+}
+
+.pulse-badge {
+  animation: pulseGlow 2s infinite;
+}
+
+/* Live Order Tracker Line Glow */
+@keyframes progressGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-progress-bar {
+  background: linear-gradient(90deg, #FF3B30, #FFB800, #10B981, #FF3B30);
+  background-size: 300% 300%;
+  animation: progressGlow 4s ease infinite;
+}
+
+/* Shimmer Loading Skeleton */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-subtle) 25%, var(--border-color) 50%, var(--bg-subtle) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+/* Fade In Up Entrance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Delay Stagger Classes */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }

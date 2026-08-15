@@ -1,0 +1,607 @@
+@charset "ISO-8859-1";
+/* ==========================================================================
+   CRAVIO PAGE LAYOUT STYLES
+   Specific section styles for Home, Listing, Detail, Cart, Checkout, Track, About, Contact
+   ========================================================================== */
+
+/* ================= 1. HOME PAGE ================= */
+.hero-section {
+  position: relative;
+  padding: 4rem 0 6rem 0;
+  overflow: hidden;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid rgba(255, 59, 48, 0.2);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hero-slider-container {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.hero-slide.active {
+  opacity: 1;
+}
+
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-slide-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+  color: #FFF;
+}
+
+.hero-slide-tag {
+  background: var(--primary);
+  color: #FFF;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+/* Category Pills Section */
+.section-title-wrap {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1.25rem;
+}
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: var(--transition-bounce);
+  cursor: pointer;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.category-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  margin-bottom: 0.85rem;
+  transition: var(--transition-fast);
+}
+
+.category-card:hover .category-icon {
+  background: var(--primary-gradient);
+  color: #FFF;
+}
+
+.category-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+/* App Download Banner */
+.app-download-banner {
+  background: var(--primary-gradient);
+  border-radius: var(--radius-xl);
+  padding: 4rem;
+  color: #FFF;
+  position: relative;
+  overflow: hidden;
+  margin: 5rem 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: var(--shadow-glow);
+}
+
+.app-download-content h2 {
+  color: #FFF;
+  font-size: 2.75rem;
+  margin-bottom: 1rem;
+}
+
+.app-download-content p {
+  opacity: 0.9;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.app-store-btns {
+  display: flex;
+  gap: 1rem;
+}
+
+.app-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: #FFF;
+  color: #0F172A;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  transition: var(--transition-fast);
+}
+
+.app-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.app-btn i {
+  font-size: 1.75rem;
+  color: var(--primary);
+}
+
+/* Stats Counter Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin: 4rem 0;
+}
+
+.stat-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-number {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  font-family: var(--font-heading);
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ================= 2. RESTAURANT LISTING ================= */
+.listing-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2.5rem;
+  padding: 3rem 0;
+}
+
+.filter-sidebar {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.filter-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.85rem;
+}
+
+.filter-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+}
+
+.filter-checkbox-label input[type="checkbox"] {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+.listing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
+}
+
+.sorting-tabs {
+  display: flex;
+  gap: 0.5rem;
+  background-color: var(--bg-subtle);
+  padding: 0.35rem;
+  border-radius: var(--radius-pill);
+}
+
+.tab-btn {
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  transition: var(--transition-fast);
+}
+
+.tab-btn.active {
+  background-color: var(--bg-surface);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.75rem;
+}
+
+/* ================= 3. RESTAURANT DETAILS ================= */
+.restaurant-hero-banner {
+  height: 320px;
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin: 2rem 0;
+}
+
+.restaurant-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.restaurant-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 2.5rem;
+  color: #FFF;
+}
+
+.restaurant-hero-info h1 {
+  color: #FFF;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.restaurant-hero-tags {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.menu-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2.5rem;
+  margin: 3rem 0;
+}
+
+.category-nav-bar {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.menu-category-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 2rem 0 1.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sticky-cart-sidebar {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  position: sticky;
+  top: 100px;
+  box-shadow: var(--shadow-md);
+  height: fit-content;
+}
+
+/* ================= 4. CART & 5. CHECKOUT ================= */
+.cart-grid, .checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2.5rem;
+  padding: 3rem 0;
+}
+
+.cart-table-card, .summary-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.cart-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cart-item-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cart-item-thumb {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.summary-total {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-main);
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+/* Checkout Address & Payment Cards */
+.address-card {
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  margin-bottom: 1rem;
+  background-color: var(--bg-surface);
+}
+
+.address-card.active, .address-card:hover {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.payment-tab-content {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-md);
+}
+
+/* ================= 6. TRACK ORDER ================= */
+.track-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 3rem;
+  margin: 3rem 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.tracker-timeline {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 3rem 0;
+}
+
+.tracker-timeline::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: var(--border-color);
+  z-index: 1;
+}
+
+.tracker-timeline-progress {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  z-index: 2;
+  transition: width 0.8s ease;
+}
+
+.tracker-step {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tracker-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: var(--bg-surface);
+  border: 3px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  transition: var(--transition-bounce);
+}
+
+.tracker-step.completed .tracker-icon {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+  color: #FFF;
+}
+
+.tracker-step.active .tracker-icon {
+  background: var(--primary-gradient);
+  border-color: var(--primary);
+  color: #FFF;
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.15);
+}
+
+.tracker-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.map-placeholder {
+  height: 320px;
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  color: var(--text-muted);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Responsive Overrides */
+@media (max-width: 992px) {
+  .hero-grid, .app-download-banner, .listing-layout, .menu-layout, .cart-grid, .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-title { font-size: 2.5rem; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .filter-sidebar { position: static; }
+  .tracker-timeline { flex-direction: column; gap: 2rem; }
+  .tracker-timeline::before { display: none; }
+  .tracker-timeline-progress { display: none; }
+}
