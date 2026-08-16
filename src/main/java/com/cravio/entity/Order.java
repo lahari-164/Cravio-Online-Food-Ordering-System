@@ -40,6 +40,12 @@ public class Order {
     @Column(name = "payment_method", length = 50)
     private String paymentMethod;
 
+    // NEW — set by PaymentService.authorizePayment() at order time.
+    // Lets you reconcile orders against a real gateway later and gives
+    // track-order.jsp something real to display instead of dummy data.
+    @Column(name = "transaction_id", length = 100)
+    private String transactionId;
+
     @Column(name = "order_date", nullable = false, updatable = false, insertable = false)
     private LocalDateTime orderDate;
 }

@@ -107,11 +107,28 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const restId = urlParams.get('id') || 'rest-1';
-
     if (!window.CravioData) return;
+    // NEW — restaurant/menu data now comes from the backend
+    // (GET /api/restaurants, GET /api/restaurants/{id}/products) and loads
+    // asynchronously, so wait for it before trying to render.
+    var readyPromise = (window.CravioData.ready && typeof window.CravioData.ready.then === 'function')
+      ? window.CravioData.ready
+      : Promise.resolve();
+    readyPromise.then(initRestaurantDetailPage);
+  });
+
+  function initRestaurantDetailPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const restId = urlParams.get('id');
+
     const rest = window.CravioData.getRestaurantById(restId);
+    if (!rest) {
+      const container = document.getElementById('dishCardsContainer');
+      if (container) {
+        container.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Restaurant not found. It may have been removed, or the backend could not be reached.</div>';
+      }
+      return;
+    }
 
     // Populate Restaurant Info
     document.title = rest.name + ' | Cravio';
@@ -174,7 +191,7 @@
           '<div class="dish-price">₹' + d.price + '</div>' +
           '<p class="dish-desc">' + d.desc + '</p>' +
         '</div>' +
-        '<button class="btn btn-primary btn-sm" onclick="CravioCart.addItem({id: \'' + d.id + '\', name: \'' + d.name.replace(/'/g, "\\'") + '\', price: ' + d.price + ', image: \'' + d.image + '\', restaurant: \'' + restName.replace(/'/g, "\\'") + '\', restaurantId: \'' + restId + '\'})">' +
+        '<button class="btn btn-primary btn-sm" onclick="CravioCart.addItem({id: \'' + d.id + '\', productId: ' + d.productId + ', name: \'' + d.name.replace(/'/g, "\\'") + '\', price: ' + d.price + ', image: \'' + d.image + '\', restaurant: \'' + restName.replace(/'/g, "\\'") + '\', restaurantId: \'' + restId + '\'})">' +
           '<i class="fa-solid fa-plus"></i> Add' +
         '</button>' +
       '</div>';

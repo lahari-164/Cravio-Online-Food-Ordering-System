@@ -205,14 +205,29 @@
           <span style="font-size: 0.8rem; color: var(--text-muted);">${d.restaurantName}</span>
           <div style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-top: 0.25rem;">₹${d.price}</div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="CravioCart.addItem({id: '${d.id}', name: '${d.name.replace(/'/g, "\\'")}', price: ${d.price}, image: '${d.image}', restaurant: '${d.restaurantName.replace(/'/g, "\\'")}', restaurantId: '${d.restaurantId}'})">
+        <button class="btn btn-primary btn-sm" onclick="CravioCart.addItem({id: '${d.id}', productId: ${d.productId}, name: '${d.name.replace(/'/g, "\\'")}', price: ${d.price}, image: '${d.image}', restaurant: '${d.restaurantName.replace(/'/g, "\\'")}', restaurantId: '${d.restaurantId}'})">
           <i class="fa-solid fa-plus"></i> Add
         </button>
       </div>
     `).join('');
   }
 
-  document.addEventListener('DOMContentLoaded', initFilterEngine);
+  // NEW — restaurant-data.js now loads restaurants/menu from the backend
+  // asynchronously (GET /api/restaurants), so it may not have finished by
+  // the time DOMContentLoaded fires. Wait for it, then render; also
+  // re-render whenever fresh data arrives (covers any later reload).
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.CravioData && window.CravioData.ready && typeof window.CravioData.ready.then === 'function') {
+      window.CravioData.ready.then(initFilterEngine);
+    } else {
+      initFilterEngine();
+    }
+  });
+
+  document.addEventListener('cravio:data-ready', function () {
+    renderFilteredRestaurants();
+    renderExploreFoodsGrid();
+  });
 
   window.CravioFilter = {
     renderFilteredRestaurants,
