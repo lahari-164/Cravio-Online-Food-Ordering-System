@@ -26,16 +26,42 @@
   };
 
   const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80";
+  const RESTAURANT_FALLBACKS = [
+    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80"
+  ];
+  const DISH_FALLBACKS = [
+    "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80"
+  ];
+
+  function validImageUrl(value, fallbackList, index) {
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (trimmed && trimmed !== 'null' && trimmed !== 'undefined') {
+        return trimmed;
+      }
+    }
+
+    const fallback = fallbackList && fallbackList.length ? fallbackList[index % fallbackList.length] : FALLBACK_IMAGE;
+    return fallback || FALLBACK_IMAGE;
+  }
 
   // Live array — populated in place (not reassigned) so any code holding
   // a reference to window.CravioData.RESTAURANTS sees the real data once
   // it arrives, as long as it re-reads/re-renders after 'cravio:data-ready'.
   const RESTAURANTS = [];
 
-  function mapProduct(p) {
+  function mapProduct(p, index) {
     return {
       id: String(p.id),
-      productId: p.id, // real DB id — REQUIRED for CravioCart.addItem / checkout
+      productId: p.id,
       category: p.category || 'Menu',
       name: p.name,
       price: Number(p.price),
@@ -43,16 +69,18 @@
       prepTime: '15-20 min',
       isAvailable: p.isAvailable !== false,
       rating: 4.5,
-      image: p.imageUrl || FALLBACK_IMAGE,
+      image: validImageUrl(p.imageUrl, DISH_FALLBACKS, Number(p.id || index || 0)),
       desc: p.description || ''
     };
   }
 
-  function mapRestaurant(r, products) {
+  function mapRestaurant(r, products, index) {
     const cuisineList = (r.cuisine || '')
       .split(',')
       .map(function (c) { return c.trim(); })
       .filter(Boolean);
+
+    const cleanedImage = validImageUrl(r.imageUrl, RESTAURANT_FALLBACKS, Number(r.id || index || 0));
 
     return {
       id: String(r.id),
@@ -66,14 +94,14 @@
       deliveryTime: r.deliveryTime || '30-40 min',
       priceForTwo: r.priceForTwo || 300,
       openingHours: r.openingHours || '10:00 AM - 10:00 PM',
-      image: r.imageUrl || FALLBACK_IMAGE,
-      banner: r.imageUrl || FALLBACK_IMAGE,
-      gallery: r.imageUrl ? [r.imageUrl] : [FALLBACK_IMAGE],
+      image: cleanedImage,
+      banner: cleanedImage,
+      gallery: [cleanedImage],
       offer: 'Available on CRAVIO',
       offerCode: '',
       vegOnly: false,
       description: r.description || '',
-      menu: products.map(mapProduct)
+      menu: products.map(function (p, productIndex) { return mapProduct(p, productIndex + (index || 0)); })
     };
   }
 
