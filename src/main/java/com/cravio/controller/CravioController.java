@@ -60,6 +60,11 @@ public class CravioController {
 		return "index";
 	}
 
+	@GetMapping("/error")
+	public String errorPage() {
+		return "error";
+	}
+
 	@GetMapping("/login")
 	public String login() {
 		return "login";

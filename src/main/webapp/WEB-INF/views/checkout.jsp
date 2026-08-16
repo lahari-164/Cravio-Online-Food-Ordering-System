@@ -129,7 +129,6 @@
 <%@ include file="footer.jsp" %>
 
 <script>
-<script>
 let selectedAddressId = null;
 let selectedPaymentMethod = null;
 
@@ -157,12 +156,7 @@ function renderCheckoutAddresses() {
     return;
   }
 
-  // Auto-select the default address if nothing selected yet
-  if (!selectedAddressId) {
-    const def = addresses.find(a => a.isDefault) || addresses[0];
-    selectedAddressId = def.id;
-  }
-
+  // Require the user to manually pick an address instead of auto-selecting one.
   addresses.forEach((addr) => {
     const card = document.createElement('button');
     const isWorkAddress = addr.tag === 'WORK';
@@ -340,6 +334,25 @@ async function placeOrderAnimation() {
     items: cart.map(item => ({ productId: item.productId, quantity: item.qty }))
   };
 
+  const checkoutSummary = {
+    orderId: null,
+    restaurantName: cart[0]?.restaurant || 'Cravio Kitchen',
+    deliveryAddress,
+    paymentMethod: getPaymentMethodLabel(),
+    items: cart.map(item => ({
+      id: item.id,
+      productId: item.productId,
+      name: item.name,
+      qty: item.qty,
+      price: Number(item.price),
+      total: Number(item.price) * Number(item.qty)
+    })),
+    subtotal: cart.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty)), 0),
+    deliveryFee: 0,
+    tax: cart.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty)), 0) * 0.05,
+    total: cart.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty)), 0) * 1.05
+  };
+
   const btn = document.getElementById('btnPlaceOrder');
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Payment...';
@@ -360,9 +373,16 @@ async function placeOrderAnimation() {
     }
 
     const order = await res.json();
+    checkoutSummary.orderId = order.id;
+    checkoutSummary.restaurantName = cart[0]?.restaurant || checkoutSummary.restaurantName;
+    localStorage.setItem('cravio_last_order', JSON.stringify(checkoutSummary));
 
     // Clear the cart now that the real order is saved in the database
-    localStorage.removeItem('cravio_cart_data');
+    if (window.CravioCart && typeof window.CravioCart.clearCart === 'function') {
+      window.CravioCart.clearCart();
+    } else {
+      localStorage.removeItem('cravio_cart_data');
+    }
 
     if (window.CravioToast) window.CravioToast('Order #' + order.id + ' placed successfully!', 'success');
     setTimeout(() => {
@@ -384,5 +404,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.renderCheckoutAddresses = renderCheckoutAddresses;
+window.renderCheckoutItems = renderCheckoutItems;
+window.selectPayment = selectPayment;
+window.validateCheckoutForm = validateCheckoutForm;
+window.placeOrderAnimation = placeOrderAnimation;
 </script>
 

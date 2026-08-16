@@ -9,16 +9,16 @@
 <div class="container">
   <!-- DYNAMIC RESTAURANT HERO BANNER -->
   <div class="restaurant-hero-banner" id="restBannerContainer">
-    <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1200&q=80" alt="Restaurant Banner" class="restaurant-banner-img" id="restBannerImg" style="transition: opacity 0.3s ease;">
+    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80" alt="Restaurant Banner" class="restaurant-banner-img" id="restBannerImg" style="transition: opacity 0.3s ease;">
     <div class="restaurant-hero-overlay">
       <div class="restaurant-hero-info">
-        <span class="badge badge-offer" id="restOfferBadge" style="margin-bottom: 0.5rem;"><i class="fa-solid fa-fire"></i> 20% OFF | Code CRAVIO20</span>
-        <h1 id="restNameHeading">Hyderabad Biryani House</h1>
+        <span class="badge badge-offer" id="restOfferBadge" style="margin-bottom: 0.5rem;"><i class="fa-solid fa-fire"></i> Loading restaurant...</span>
+        <h1 id="restNameHeading">Loading restaurant...</h1>
         <div class="restaurant-hero-tags" id="restMetaTags">
-          <span><i class="fa-solid fa-star" style="color: #FFB800;"></i> <span id="restRatingText">4.9 (3.4k+ Reviews)</span></span>
-          <span><i class="fa-solid fa-utensils"></i> <span id="restCuisineText">Hyderabadi Dum Biryani & Mughlai</span></span>
-          <span><i class="fa-regular fa-clock"></i> <span id="restTimeText">20-30 Mins</span></span>
-          <span><i class="fa-solid fa-location-dot"></i> <span id="restAddressText">Jubilee Hills, Hyderabad</span></span>
+          <span><i class="fa-solid fa-star" style="color: #FFB800;"></i> <span id="restRatingText">--</span></span>
+          <span><i class="fa-solid fa-utensils"></i> <span id="restCuisineText">--</span></span>
+          <span><i class="fa-regular fa-clock"></i> <span id="restTimeText">--</span></span>
+          <span><i class="fa-solid fa-location-dot"></i> <span id="restAddressText">--</span></span>
         </div>
       </div>
     </div>
@@ -28,8 +28,8 @@
   <div class="card-glass" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
     <div style="flex-grow: 1; max-width: 600px;">
       <h4 style="font-size: 1.1rem; font-weight: 700;">About Restaurant</h4>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;" id="restDescriptionText">Authentic royal Nizami biryanis cooked in clay handis with pure saffron, Kashmiri spices & tender meats.</p>
-      <span style="font-size: 0.8rem; color: var(--accent-green); font-weight: 600; margin-top: 0.5rem; display: inline-block;" id="restOpeningHours"><i class="fa-regular fa-clock"></i> Open: 11:00 AM - 11:30 PM</span>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;" id="restDescriptionText">Loading restaurant details...</p>
+      <span style="font-size: 0.8rem; color: var(--accent-green); font-weight: 600; margin-top: 0.5rem; display: inline-block;" id="restOpeningHours"><i class="fa-regular fa-clock"></i> Open: --</span>
     </div>
 
     <%-- Clickable Gallery Thumbnails --%>
@@ -107,92 +107,131 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-    if (!window.CravioData) return;
-    // NEW — restaurant/menu data now comes from the backend
-    // (GET /api/restaurants, GET /api/restaurants/{id}/products) and loads
-    // asynchronously, so wait for it before trying to render.
-    var readyPromise = (window.CravioData.ready && typeof window.CravioData.ready.then === 'function')
-      ? window.CravioData.ready
-      : Promise.resolve();
-    readyPromise.then(initRestaurantDetailPage);
+    initRestaurantDetailPage();
   });
 
-  function initRestaurantDetailPage() {
+  function showRestaurantNotFound(message) {
+    const nameEl = document.getElementById('restNameHeading');
+    const badgeEl = document.getElementById('restOfferBadge');
+    const ratingEl = document.getElementById('restRatingText');
+    const cuisineEl = document.getElementById('restCuisineText');
+    const timeEl = document.getElementById('restTimeText');
+    const addressEl = document.getElementById('restAddressText');
+    const descriptionEl = document.getElementById('restDescriptionText');
+    const hoursEl = document.getElementById('restOpeningHours');
+    const menuContainer = document.getElementById('dishCardsContainer');
+
+    if (nameEl) nameEl.textContent = 'Restaurant not found';
+    if (badgeEl) badgeEl.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Invalid restaurant';
+    if (ratingEl) ratingEl.textContent = '--';
+    if (cuisineEl) cuisineEl.textContent = '--';
+    if (timeEl) timeEl.textContent = '--';
+    if (addressEl) addressEl.textContent = '--';
+    if (descriptionEl) descriptionEl.textContent = message;
+    if (hoursEl) hoursEl.innerHTML = '<i class="fa-regular fa-clock"></i> Open: --';
+    if (menuContainer) {
+      menuContainer.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">' +
+        '<p style="margin-bottom: 1rem;">' + message + '</p>' +
+        '<a href="' + window.location.origin + '/restaurants" class="btn btn-primary">Back to Restaurants</a>' +
+        '</div>';
+    }
+  }
+
+  async function initRestaurantDetailPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const restId = urlParams.get('id');
 
-    const rest = window.CravioData.getRestaurantById(restId);
-    if (!rest) {
-      const container = document.getElementById('dishCardsContainer');
-      if (container) {
-        container.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">Restaurant not found. It may have been removed, or the backend could not be reached.</div>';
-      }
+    if (!restId || isNaN(Number(restId))) {
+      showRestaurantNotFound('No valid restaurant ID was provided in the URL.');
       return;
     }
 
-    // Populate Restaurant Info
-    document.title = rest.name + ' | Cravio';
-    document.getElementById('restNameHeading').textContent = rest.name;
-    document.getElementById('restBannerImg').src = rest.banner || rest.image;
-    document.getElementById('restOfferBadge').innerHTML = '<i class="fa-solid fa-fire"></i> ' + rest.offer;
-    document.getElementById('restRatingText').textContent = rest.rating + ' (' + rest.reviewCount + '+ Reviews)';
-    document.getElementById('restCuisineText').textContent = rest.cuisine.join(' • ');
-    document.getElementById('restTimeText').textContent = rest.deliveryTime;
-    document.getElementById('restAddressText').textContent = rest.address || (rest.locality + ', ' + rest.city);
-    document.getElementById('restDescriptionText').textContent = rest.description;
-    document.getElementById('restOpeningHours').innerHTML = '<i class="fa-regular fa-clock"></i> Open: ' + rest.openingHours;
+    try {
+      const restaurantRes = await fetch('/api/restaurants/' + restId);
+      if (!restaurantRes.ok) {
+        showRestaurantNotFound('Restaurant not found for this ID.');
+        return;
+      }
 
-    // Render Clickable Gallery Thumbnails
+      const restaurant = await restaurantRes.json();
+      const productRes = await fetch('/api/restaurants/' + restId + '/products');
+      const products = productRes.ok ? await productRes.json() : [];
+
+      populateRestaurant(restaurant, products);
+    } catch (error) {
+      console.error('CRAVIO: failed to load restaurant details', error);
+      showRestaurantNotFound('Unable to load restaurant details right now.');
+    }
+  }
+
+  function populateRestaurant(restaurant, products) {
+    const restaurantName = restaurant.name || 'Restaurant';
+    document.title = restaurantName + ' | Cravio';
+    document.getElementById('restNameHeading').textContent = restaurantName;
+    document.getElementById('restBannerImg').src = restaurant.imageUrl || restaurant.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80';
+    document.getElementById('restOfferBadge').innerHTML = '<i class="fa-solid fa-fire"></i> ' + (restaurant.offer || 'Freshly prepared');
+    document.getElementById('restRatingText').textContent = (restaurant.rating != null ? Number(restaurant.rating).toFixed(1) : '4.5') + ' (' + (restaurant.reviewCount || '3.4k+') + '+ Reviews)';
+    const cuisine = Array.isArray(restaurant.cuisine)
+      ? restaurant.cuisine.join(' • ')
+      : (restaurant.cuisine || 'Multi-cuisine');
+    document.getElementById('restCuisineText').textContent = cuisine;
+    document.getElementById('restTimeText').textContent = restaurant.deliveryTime || '30-40 min';
+    document.getElementById('restAddressText').textContent = restaurant.address || (restaurant.locality || '') + (restaurant.city ? ', ' + restaurant.city : '');
+    document.getElementById('restDescriptionText').textContent = restaurant.description || 'No description available.';
+    document.getElementById('restOpeningHours').innerHTML = '<i class="fa-regular fa-clock"></i> Open: ' + (restaurant.openingHours || 'Hours not available');
+
     const galleryContainer = document.getElementById('restGalleryThumbnails');
     if (galleryContainer) {
-      const photos = rest.gallery || [rest.banner || rest.image, rest.image];
+      const photos = [restaurant.imageUrl || restaurant.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80'];
       galleryContainer.innerHTML = photos.map(function(p) {
         return '<img src="' + p + '" onclick="switchBannerImage(this.src)" style="width: 72px; height: 72px; border-radius: var(--radius-md); object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: all 0.2s ease;" onmouseover="this.style.borderColor=\'var(--primary)\'; this.style.transform=\'scale(1.05)\'" onmouseout="this.style.borderColor=\'transparent\'; this.style.transform=\'scale(1)\'" title="Click to view full photo">';
       }).join('');
     }
 
-    // Render Menu Items
-    renderMenuList(rest.menu, rest.name, rest.id);
+    renderMenuList(products || [], restaurantName, restaurant.id);
 
-    // Menu Search Input
     const menuSearch = document.getElementById('menuSearchInput');
     if (menuSearch) {
-      menuSearch.addEventListener('input', function(e) {
+      menuSearch.oninput = function(e) {
         const q = e.target.value.toLowerCase().trim();
-        const filtered = rest.menu.filter(function(d) {
-          return d.name.toLowerCase().indexOf(q) !== -1 || d.desc.toLowerCase().indexOf(q) !== -1;
+        const filtered = (products || []).filter(function(d) {
+          return (d.name || '').toLowerCase().indexOf(q) !== -1 || (d.description || '').toLowerCase().indexOf(q) !== -1;
         });
-        renderMenuList(filtered, rest.name, rest.id);
-      });
+        renderMenuList(filtered, restaurantName, restaurant.id);
+      };
     }
-  });
+  }
 
   function renderMenuList(items, restName, restId) {
     const container = document.getElementById('dishCardsContainer');
     if (!container) return;
 
     if (!items || items.length === 0) {
-      container.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">No dishes match your menu search.</div>';
+      container.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">No dishes are available for this restaurant right now.</div>';
       return;
     }
 
     container.innerHTML = items.map(function(d) {
-      const vegBadge = d.isVeg ? '<span class="badge-veg">● VEG</span>' : '<span class="badge-nonveg">● NON-VEG</span>';
+      const isAvailable = d.isAvailable !== false;
+      const vegBadge = (d.category || '').toLowerCase().indexOf('veg') !== -1 ? '<span class="badge-veg">● VEG</span>' : '<span class="badge-nonveg">● NON-VEG</span>';
+      const buttonLabel = isAvailable ? '<i class="fa-solid fa-plus"></i> Add' : 'Unavailable';
+      const disabledAttr = isAvailable ? '' : 'disabled';
       return '<div class="dish-card">' +
         '<div class="dish-img-wrapper">' +
-          '<img src="' + d.image + '" alt="' + d.name + '" class="dish-img">' +
+          '<img src="' + (d.imageUrl || d.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80') + '" alt="' + (d.name || 'Dish') + '" class="dish-img">' +
         '</div>' +
         '<div class="dish-info">' +
           '<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">' +
             vegBadge +
-            '<span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> ' + (d.prepTime || '15 min') + '</span>' +
+            '<span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> 15-20 min</span>' +
           '</div>' +
-          '<h3 class="dish-title">' + d.name + '</h3>' +
-          '<div class="dish-price">₹' + d.price + '</div>' +
-          '<p class="dish-desc">' + d.desc + '</p>' +
+          '<h3 class="dish-title">' + (d.name || 'Dish') + '</h3>' +
+          '<div class="dish-price">₹' + Number(d.price || 0) + '</div>' +
+          '<p class="dish-desc">' + (d.description || 'No description available.') + '</p>' +
+          '<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem;">Category: ' + (d.category || 'General') + '</div>' +
         '</div>' +
-        '<button class="btn btn-primary btn-sm" onclick="CravioCart.addItem({id: \'' + d.id + '\', productId: ' + d.productId + ', name: \'' + d.name.replace(/'/g, "\\'") + '\', price: ' + d.price + ', image: \'' + d.image + '\', restaurant: \'' + restName.replace(/'/g, "\\'") + '\', restaurantId: \'' + restId + '\'})">' +
-          '<i class="fa-solid fa-plus"></i> Add' +
+        '<button class="btn btn-primary btn-sm" ' + disabledAttr + ' onclick="CravioCart.addItem({id: \'' + (d.id || 'dish-' + Date.now()) + '\', productId: ' + (d.id || 0) + ', name: \'' + (d.name || 'Dish').replace(/'/g, "\\'") + '\', price: ' + Number(d.price || 0) + ', image: \'' + (d.imageUrl || d.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80').replace(/'/g, "\\'") + '\', restaurant: \'' + restName.replace(/'/g, "\\'") + '\', restaurantId: \'' + restId + '\'})">' +
+          buttonLabel +
         '</button>' +
       '</div>';
     }).join('');

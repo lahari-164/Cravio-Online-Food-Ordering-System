@@ -163,7 +163,6 @@
       <div class="card-glass restaurant-card">
         <div class="restaurant-img-wrapper">
           <img src="${r.image}" alt="${r.name}" class="restaurant-img">
-          <button class="restaurant-fav-btn"><i class="fa-regular fa-heart"></i></button>
           <div class="restaurant-offer-tag">${r.offer}</div>
         </div>
         <div class="restaurant-content">

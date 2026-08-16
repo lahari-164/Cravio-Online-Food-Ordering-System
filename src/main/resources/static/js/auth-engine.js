@@ -125,6 +125,7 @@ function logoutUser() {
   function updateAuthUI() {
     const loginBtns = document.querySelectorAll('.trigger-login');
     const signupBtns = document.querySelectorAll('.trigger-signup');
+    const orderLinks = document.querySelectorAll('.orders-nav-link, .orders-footer-link');
     const logged = isLoggedIn();
     const user = getUser();
 
@@ -147,6 +148,14 @@ function logoutUser() {
         btn.style.display = 'none';
       } else {
         btn.style.display = 'inline-block';
+      }
+    });
+
+    orderLinks.forEach(link => {
+      if (logged) {
+        link.style.display = 'inline-flex';
+      } else {
+        link.style.display = 'none';
       }
     });
   }

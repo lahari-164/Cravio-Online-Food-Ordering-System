@@ -114,6 +114,13 @@
     overlay.classList.add('active');
   }
 
+  function clearCart() {
+    cart = [];
+    appliedCoupon = null;
+    pendingItemToAdd = null;
+    saveCart();
+  }
+
   function clearCartAndAddPending() {
     cart = [];
     const overlay = document.getElementById('cartConflictModalOverlay');
@@ -244,6 +251,7 @@
     getSubtotal,
     getCartCount,
     saveCart,
+    clearCart,
     clearCartAndAddPending,
     cancelPendingAdd
   };

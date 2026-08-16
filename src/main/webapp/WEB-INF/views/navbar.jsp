@@ -29,6 +29,7 @@
       <a href="${pageContext.request.contextPath}/restaurants" class="nav-link <%= "restaurants".equals(activePage) ? "active" : "" %>">Restaurants</a>
       <a href="${pageContext.request.contextPath}/about" class="nav-link <%= "about".equals(activePage) ? "active" : "" %>">About</a>
       <a href="${pageContext.request.contextPath}/contact" class="nav-link <%= "contact".equals(activePage) ? "active" : "" %>">Contact</a>
+      <a href="${pageContext.request.contextPath}/orders" class="nav-link orders-nav-link <%= "orders".equals(activePage) ? "active" : "" %>" style="display: none;">Orders</a>
     </nav>
 
     <%-- Action Buttons & Expandable Search --%>
@@ -85,6 +86,7 @@
     <a href="${pageContext.request.contextPath}/about" class="drawer-link">About Us</a>
     <a href="${pageContext.request.contextPath}/contact" class="drawer-link">Contact & Help</a>
     <a href="${pageContext.request.contextPath}/cart" class="drawer-link">My Cart</a>
+    <a href="${pageContext.request.contextPath}/orders" class="drawer-link orders-nav-link" style="display: none;">My Orders</a>
     <a href="${pageContext.request.contextPath}/track-order" class="drawer-link">Track Order</a>
     <hr style="border-color: var(--border-color); margin: 1rem 0;">
     <button class="btn btn-secondary trigger-login" style="width: 100%;">Login</button>

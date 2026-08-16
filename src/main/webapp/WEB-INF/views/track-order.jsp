@@ -101,38 +101,30 @@
       <!-- ORDER DETAILS & SUMMARY -->
       <div class="summary-card">
         <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Order Details</h3>
-        
-        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
-          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.5rem;">
-            <span>Hyderabadi Chicken Dum Biryani x 2</span>
-            <strong>₹760</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-            <span>Double Ka Meetha x 1</span>
-            <strong>₹160</strong>
-          </div>
-        </div>
+
+        <div id="trackedOrderItems" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;"></div>
 
         <div class="summary-row">
           <span>Subtotal</span>
-          <strong>₹920</strong>
+          <strong id="trackedSubtotal">₹0</strong>
         </div>
         <div class="summary-row">
           <span>Delivery Fee</span>
-          <span>FREE</span>
+          <span id="trackedDeliveryFee">FREE</span>
         </div>
         <div class="summary-row">
           <span>Taxes (GST 5%)</span>
-          <span>₹46</span>
-        </div>
-        
-        <div class="summary-total" style="display: flex; justify-content: space-between;">
-          <span>Paid Total</span>
-          <span style="color: var(--primary);">₹966</span>
+          <span id="trackedTax">₹0</span>
         </div>
 
-        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
-          <i class="fa-solid fa-house" style="color: var(--primary);"></i> Delivering to Flat 402, Jubilee Heights, Jubilee Hills, Hyderabad
+        <div class="summary-total" style="display: flex; justify-content: space-between;">
+          <span>Paid Total</span>
+          <span id="trackedPaidTotal" style="color: var(--primary);">₹0</span>
+        </div>
+
+        <div id="trackedDeliveryAddress" style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-house" style="color: var(--primary);"></i>
+          <span>Delivering to your address</span>
         </div>
       </div>
     </div>
@@ -165,6 +157,56 @@
 </div>
 
 <%@ include file="footer.jsp" %>
+
+<script>
+  function formatCurrency(value) {
+    return '₹' + Number(value || 0).toFixed(0);
+  }
+
+  function hydrateOrderSummary() {
+    const lastOrder = JSON.parse(localStorage.getItem('cravio_last_order') || 'null');
+    const itemsEl = document.getElementById('trackedOrderItems');
+    const subtotalEl = document.getElementById('trackedSubtotal');
+    const taxEl = document.getElementById('trackedTax');
+    const totalEl = document.getElementById('trackedPaidTotal');
+    const deliveryFeeEl = document.getElementById('trackedDeliveryFee');
+    const deliveryAddressEl = document.getElementById('trackedDeliveryAddress');
+
+    if (!lastOrder) {
+      if (itemsEl) itemsEl.innerHTML = '<div style="font-size: 0.9rem; color: var(--text-muted);">No order summary found.</div>';
+      return;
+    }
+
+    const subtotal = Number(lastOrder.subtotal || 0);
+    const tax = Number(lastOrder.tax || 0);
+    const deliveryFee = Number(lastOrder.deliveryFee || 0);
+    const total = Number(lastOrder.total || subtotal + tax + deliveryFee);
+
+    if (itemsEl) {
+      itemsEl.innerHTML = (lastOrder.items || []).map(function (item) {
+        return '<div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.5rem;">' +
+          '<span>' + (item.name || 'Order item') + ' x ' + (item.qty || 1) + '</span>' +
+          '<strong>' + formatCurrency(item.total || (Number(item.price || 0) * Number(item.qty || 1))) + '</strong>' +
+          '</div>';
+      }).join('');
+    }
+
+    if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
+    if (taxEl) taxEl.textContent = formatCurrency(tax);
+    if (totalEl) totalEl.textContent = formatCurrency(total);
+    if (deliveryFeeEl) deliveryFeeEl.textContent = deliveryFee > 0 ? formatCurrency(deliveryFee) : 'FREE';
+    if (deliveryAddressEl) {
+      deliveryAddressEl.innerHTML = '<i class="fa-solid fa-house" style="color: var(--primary);"></i> <span>Delivering to ' + (lastOrder.deliveryAddress || 'your address') + '</span>';
+    }
+
+    const orderTitle = document.querySelector('p[style*="color: var(--text-muted);"]');
+    if (orderTitle) {
+      orderTitle.textContent = 'Order #CRV-' + (lastOrder.orderId || '0000') + ' • ' + (lastOrder.restaurantName || 'Cravio Kitchen');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', hydrateOrderSummary);
+</script>
 
 <!-- Include Leaflet JS for OpenStreetMap -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

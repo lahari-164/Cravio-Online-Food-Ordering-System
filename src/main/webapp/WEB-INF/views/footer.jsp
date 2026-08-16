@@ -39,6 +39,7 @@
         <div class="footer-links">
           <a href="${pageContext.request.contextPath}/restaurants">Trending Dishes</a>
           <a href="${pageContext.request.contextPath}/cart">View Cart</a>
+          <a href="${pageContext.request.contextPath}/orders" class="orders-footer-link" style="display: none;">My Orders</a>
           <a href="${pageContext.request.contextPath}/track-order">Track Order</a>
           <a href="${pageContext.request.contextPath}/contact#faq">FAQs</a>
           <a href="${pageContext.request.contextPath}/contact">Help & Support</a>
