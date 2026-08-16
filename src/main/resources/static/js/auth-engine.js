@@ -68,9 +68,10 @@
     window.dispatchEvent(new CustomEvent('cravio:addresses-updated'));
   }
 
-  function loginUser(name, email, phone) {
+  function loginUser(name, email, phone, id) {
     const existing = getUser();
     const user = {
+      id: id || existing.id,
       name: name || existing.name || 'Rohan Sharma',
       email: email || existing.email || 'rohan.sharma@example.com',
       phone: phone || existing.phone || '+91 98765 43210'
@@ -86,11 +87,12 @@
     }
   }
 
-  function registerUser(name, email, phone) {
-    loginUser(name, email, phone);
+  function registerUser(name, email, phone, id) {
+    loginUser(name, email, phone, id);
   }
 
-  function logoutUser() {
+function logoutUser() {
+    fetch('/api/logout', { method: 'POST' }).catch(() => {});
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem(USER_KEY);
     updateAuthUI();
@@ -463,42 +465,93 @@
     });
 
     // Attach Auth form submit listeners
-    const formLogin = document.getElementById('formLogin');
+   const formLogin = document.getElementById('formLogin');
     if (formLogin) {
-      formLogin.addEventListener('submit', (e) => {
+      formLogin.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = formLogin.querySelector('input[type="email"]')?.value || 'rohan.sharma@example.com';
-        loginUser('Rohan Sharma', email, '+91 98765 43210');
+        const email = formLogin.querySelector('input[type="email"]')?.value;
+        const password = formLogin.querySelector('input[type="password"]')?.value;
 
-        const authOverlay = document.getElementById('authModalOverlay');
-        if (authOverlay) authOverlay.classList.remove('active');
-        document.body.style.overflow = '';
+        try {
+          const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
 
-        if (window._pendingPostLoginAction) {
-          const cb = window._pendingPostLoginAction;
-          window._pendingPostLoginAction = null;
-          cb();
+          if (!res.ok) {
+            const errText = await res.text();
+            if (window.CravioToast) window.CravioToast(errText || 'Login failed', 'error');
+            return;
+          }
+
+          const user = await res.json();
+          loginUser(user.name, user.email, user.phone, user.id);
+
+          const authOverlay = document.getElementById('authModalOverlay');
+          if (authOverlay) authOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+
+          if (window._pendingPostLoginAction) {
+            const cb = window._pendingPostLoginAction;
+            window._pendingPostLoginAction = null;
+            cb();
+          }
+        } catch (err) {
+          if (window.CravioToast) window.CravioToast('Unable to reach server. Please try again.', 'error');
         }
       });
     }
 
-    const formSignup = document.getElementById('formSignup');
+  const formSignup = document.getElementById('formSignup');
     if (formSignup) {
-      formSignup.addEventListener('submit', (e) => {
+      formSignup.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const name = formSignup.querySelector('input[type="text"]')?.value || 'Rohan Sharma';
-        const email = formSignup.querySelector('input[type="email"]')?.value || 'rohan.sharma@example.com';
-        const phone = formSignup.querySelector('input[type="tel"]')?.value || '+91 98765 43210';
-        registerUser(name, email, phone);
+        const name = formSignup.querySelector('input[type="text"]')?.value;
+        const email = formSignup.querySelector('input[type="email"]')?.value;
+        const phone = formSignup.querySelector('input[type="tel"]')?.value;
+        const password = formSignup.querySelector('input[type="password"]')?.value;
 
-        const authOverlay = document.getElementById('authModalOverlay');
-        if (authOverlay) authOverlay.classList.remove('active');
-        document.body.style.overflow = '';
+        try {
+          const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone, password })
+          });
 
-        if (window._pendingPostLoginAction) {
-          const cb = window._pendingPostLoginAction;
-          window._pendingPostLoginAction = null;
-          cb();
+          if (!res.ok) {
+            const errText = await res.text();
+            if (window.CravioToast) window.CravioToast(errText || 'Registration failed', 'error');
+            return;
+          }
+
+          // Registration alone doesn't start a session, so log in right after
+          // using the same credentials to establish one.
+          const loginRes = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+
+          if (!loginRes.ok) {
+            if (window.CravioToast) window.CravioToast('Account created. Please log in.', 'success');
+            return;
+          }
+
+          const user = await loginRes.json();
+          registerUser(user.name, user.email, user.phone, user.id);
+
+          const authOverlay = document.getElementById('authModalOverlay');
+          if (authOverlay) authOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+
+          if (window._pendingPostLoginAction) {
+            const cb = window._pendingPostLoginAction;
+            window._pendingPostLoginAction = null;
+            cb();
+          }
+        } catch (err) {
+          if (window.CravioToast) window.CravioToast('Unable to reach server. Please try again.', 'error');
         }
       });
     }

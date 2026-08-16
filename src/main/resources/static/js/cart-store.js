@@ -8,8 +8,8 @@
 
   const STORAGE_KEY = 'cravio_cart_data';
 
-  let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-    { id: 'd-101', name: 'Hyderabadi Chicken Dum Biryani', price: 380, qty: 2, image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=400&q=80', restaurant: 'Hyderabad Biryani House', restaurantId: 'rest-1' }
+ let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+    { id: 'd-101', productId: 1, name: 'Hyderabadi Chicken Dum Biryani', price: 380, qty: 2, image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=400&q=80', restaurant: 'Hyderabad Biryani House', restaurantId: 'rest-1' }
   ];
 
   let pendingItemToAdd = null;
@@ -61,13 +61,15 @@
       return false;
     }
 
-    // Otherwise add item normally
+   
+   // Otherwise add item normally
     const existing = cart.find(i => i.id === item.id);
     if (existing) {
       existing.qty += (item.qty || 1);
     } else {
       cart.push({
         id: item.id || 'dish-' + Date.now(),
+        productId: item.productId || null,
         name: item.name || 'Delicious Dish',
         price: parseFloat(item.price) || 250,
         qty: item.qty || 1,

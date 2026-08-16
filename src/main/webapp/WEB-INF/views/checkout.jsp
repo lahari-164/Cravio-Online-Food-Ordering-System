@@ -94,202 +94,295 @@
     <div>
       <div class="summary-card">
         <h3 style="font-size: 1.25rem; margin-bottom: 1.25rem;">Order Details</h3>
-        
-        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
-          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.5rem;">
-            <span>Hyderabadi Dum Biryani x 2</span>
-            <strong>₹760</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-            <span>Dal Makhani x 1</span>
-            <strong>₹340</strong>
-          </div>
+
+        <div id="checkoutItemsList" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <!-- Filled dynamically from the real cart -->
         </div>
 
         <div class="summary-row">
           <span>Subtotal</span>
-          <strong id="cartSubtotal">₹1100</strong>
+          <strong id="cartSubtotal">₹0</strong>
         </div>
         <div class="summary-row">
           <span>Delivery Fee</span>
-          <span id="cartDelivery">₹50</span>
+          <span id="cartDelivery">₹0</span>
         </div>
         <div class="summary-row">
           <span>GST Taxes (5%)</span>
-          <span id="cartTax">₹55</span>
+          <span id="cartTax">₹0</span>
         </div>
-        
+
         <div class="summary-total" style="display: flex; justify-content: space-between;">
           <span>Total Payable</span>
-          <span id="cartGrandTotal" style="color: var(--primary);">₹1205</span>
+          <span id="cartGrandTotal" style="color: var(--primary);">₹0</span>
         </div>
 
         <button onclick="placeOrderAnimation()" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1.5rem;" id="btnPlaceOrder">
-          <i class="fa-solid fa-lock"></i> Place Order (₹1205)
+          <i class="fa-solid fa-lock"></i> Place Order
         </button>
       </div>
     </div>
   </div>
 </section>
 
+
 <%@ include file="footer.jsp" %>
 
 <script>
-  let selectedAddressId = null;
-  let selectedPaymentMethod = null;
+<script>
+let selectedAddressId = null;
+let selectedPaymentMethod = null;
 
-  function showAddressError(show) {
-    const error = document.getElementById('checkoutAddressError');
-    if (error) error.classList.toggle('visible', show);
+function showAddressError(show) {
+  const error = document.getElementById('checkoutAddressError');
+  if (error) error.classList.toggle('visible', show);
+}
+
+function showPaymentError(show) {
+  const error = document.getElementById('paymentMethodError');
+  if (error) error.classList.toggle('visible', show);
+}
+
+function renderCheckoutAddresses() {
+  const listEl = document.getElementById('checkoutAddressList');
+  if (!listEl) return;
+
+  const addresses = window.CravioAuth && window.CravioAuth.getAddresses ? window.CravioAuth.getAddresses() : [];
+  listEl.innerHTML = '';
+
+  if (!addresses.length) {
+    listEl.innerHTML = '<div class="address-card" style="border-style: dashed; opacity: 0.9;"><strong style="font-size: 1rem;">No saved addresses yet</strong><p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">Add a delivery address to continue.</p></div>';
+    selectedAddressId = null;
+    showAddressError(false);
+    return;
   }
 
-  function showPaymentError(show) {
-    const error = document.getElementById('paymentMethodError');
-    if (error) error.classList.toggle('visible', show);
+  // Auto-select the default address if nothing selected yet
+  if (!selectedAddressId) {
+    const def = addresses.find(a => a.isDefault) || addresses[0];
+    selectedAddressId = def.id;
   }
 
-  function renderCheckoutAddresses() {
-    const listEl = document.getElementById('checkoutAddressList');
-    if (!listEl) return;
+  addresses.forEach((addr) => {
+    const card = document.createElement('button');
+    const isWorkAddress = addr.tag === 'WORK';
+    const iconClass = isWorkAddress ? 'fa-briefcase' : 'fa-house';
+    const defaultBadge = addr.isDefault ? '<span class="badge badge-offer">DEFAULT</span>' : '';
 
-    const addresses = window.CravioAuth && window.CravioAuth.getAddresses ? window.CravioAuth.getAddresses() : [];
-    listEl.innerHTML = '';
+    card.type = 'button';
+    card.className = 'address-card' + (selectedAddressId === addr.id ? ' selected' : '');
+    card.setAttribute('data-address-id', String(addr.id));
+    card.style.display = 'block';
+    card.style.textAlign = 'left';
+    card.style.width = '100%';
+    card.style.padding = '1.1rem 1.25rem';
+    card.innerHTML =
+      '<div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">' +
+      '  <strong style="font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">' +
+      '    <i class="fa-solid ' + iconClass + '" style="color: var(--primary);"></i> ' + (addr.title || 'Delivery Address') +
+      '  </strong>' +
+      defaultBadge +
+      '</div>' +
+      '<p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">' + (addr.street || '') + ', ' + (addr.city || '') + ', ' + (addr.zipcode || '') + '</p>';
 
-    if (!addresses.length) {
-      listEl.innerHTML = '<div class="address-card" style="border-style: dashed; opacity: 0.9;"><strong style="font-size: 1rem;">No saved addresses yet</strong><p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">Add a delivery address to continue.</p></div>';
-      selectedAddressId = null;
+    card.addEventListener('click', () => {
+      selectedAddressId = addr.id;
+      renderCheckoutAddresses();
       showAddressError(false);
-      return;
-    }
-
-    addresses.forEach((addr) => {
-      const card = document.createElement('button');
-      const isWorkAddress = addr.tag === 'WORK';
-      const iconClass = isWorkAddress ? 'fa-briefcase' : 'fa-house';
-      const defaultBadge = addr.isDefault ? '<span class="badge badge-offer">DEFAULT</span>' : '';
-
-      card.type = 'button';
-      card.className = 'address-card' + (selectedAddressId === addr.id ? ' selected' : '');
-      card.setAttribute('data-address-id', String(addr.id));
-      card.style.display = 'block';
-      card.style.textAlign = 'left';
-      card.style.width = '100%';
-      card.style.padding = '1.1rem 1.25rem';
-      card.innerHTML =
-        '<div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">' +
-        '  <strong style="font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">' +
-        '    <i class="fa-solid ' + iconClass + '" style="color: var(--primary);"></i> ' + (addr.title || 'Delivery Address') +
-        '  </strong>' +
-        defaultBadge +
-        '</div>' +
-        '<p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">' + (addr.street || '') + ', ' + (addr.city || '') + ', ' + (addr.zipcode || '') + '</p>';
-
-      card.addEventListener('click', () => {
-        selectedAddressId = addr.id;
-        renderCheckoutAddresses();
-        showAddressError(false);
-      });
-      listEl.appendChild(card);
     });
+    listEl.appendChild(card);
+  });
+}
+
+// Renders the real cart items (from cart-store.js) into the order summary
+function renderCheckoutItems() {
+  const listEl = document.getElementById('checkoutItemsList');
+  if (!listEl || !window.CravioCart) return;
+
+  const cart = window.CravioCart.getCart();
+
+  if (!cart.length) {
+    listEl.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Your cart is empty.</p>';
+    return;
   }
 
-  function selectPayment(type) {
-    selectedPaymentMethod = type;
-    const paymentForms = {
-      upi: document.getElementById('paymentUpiForm'),
-      card: document.getElementById('paymentCardForm'),
-      net: document.getElementById('paymentNetForm')
-    };
+  listEl.innerHTML = cart.map(item => (
+    '<div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.5rem;">' +
+    '<span>' + item.name + ' x ' + item.qty + '</span>' +
+    '<strong>₹' + (item.price * item.qty).toFixed(0) + '</strong>' +
+    '</div>'
+  )).join('');
+}
 
-    Object.values(paymentForms).forEach((form) => {
-      if (form) form.style.display = 'none';
-    });
+// Turns the selected address ID into a plain delivery address string
+function getSelectedAddressText() {
+  const addresses = window.CravioAuth && window.CravioAuth.getAddresses ? window.CravioAuth.getAddresses() : [];
+  const addr = addresses.find(a => a.id === selectedAddressId);
+  if (!addr) return null;
+  return addr.street + ', ' + addr.city + ' - ' + addr.zipcode;
+}
 
-    document.querySelectorAll('.tab-btn').forEach((button) => button.classList.remove('active'));
-    showPaymentError(false);
+// Maps the UI's payment tab keys to readable strings stored in the database
+function getPaymentMethodLabel() {
+  const map = {
+    upi: 'UPI',
+    card: 'Card',
+    net: 'Net Banking',
+    cod: 'Cash on Delivery'
+  };
+  return map[selectedPaymentMethod] || selectedPaymentMethod;
+}
 
-    if (type === 'upi' && paymentForms.upi) {
-      paymentForms.upi.style.display = 'block';
-      document.getElementById('payUpiBtn').classList.add('active');
-    } else if (type === 'card' && paymentForms.card) {
-      paymentForms.card.style.display = 'block';
-      document.getElementById('payCreditCardBtn').classList.add('active');
-    } else if (type === 'net' && paymentForms.net) {
-      paymentForms.net.style.display = 'block';
-      document.getElementById('payNetBtn').classList.add('active');
-    } else if (type === 'cod') {
-      document.getElementById('payCodBtn').classList.add('active');
-    }
+function selectPayment(type) {
+  selectedPaymentMethod = type;
+  const paymentForms = {
+    upi: document.getElementById('paymentUpiForm'),
+    card: document.getElementById('paymentCardForm'),
+    net: document.getElementById('paymentNetForm')
+  };
+
+  Object.values(paymentForms).forEach((form) => {
+    if (form) form.style.display = 'none';
+  });
+
+  document.querySelectorAll('.tab-btn').forEach((button) => button.classList.remove('active'));
+  showPaymentError(false);
+
+  if (type === 'upi' && paymentForms.upi) {
+    paymentForms.upi.style.display = 'block';
+    document.getElementById('payUpiBtn').classList.add('active');
+  } else if (type === 'card' && paymentForms.card) {
+    paymentForms.card.style.display = 'block';
+    document.getElementById('payCreditCardBtn').classList.add('active');
+  } else if (type === 'net' && paymentForms.net) {
+    paymentForms.net.style.display = 'block';
+    document.getElementById('payNetBtn').classList.add('active');
+  } else if (type === 'cod') {
+    document.getElementById('payCodBtn').classList.add('active');
+  }
+}
+
+function validateCheckoutForm() {
+  let isValid = true;
+
+  if (!selectedAddressId) {
+    showAddressError(true);
+    isValid = false;
+  } else {
+    showAddressError(false);
   }
 
-  function validateCheckoutForm() {
-    let isValid = true;
+  if (!selectedPaymentMethod) {
+    showPaymentError(true);
+    return false;
+  }
 
-    if (!selectedAddressId) {
-      showAddressError(true);
-      isValid = false;
-    } else {
-      showAddressError(false);
-    }
-
-    if (!selectedPaymentMethod) {
+  if (selectedPaymentMethod === 'upi') {
+    const upi = document.getElementById('upiIdInput')?.value.trim();
+    if (!upi) {
       showPaymentError(true);
       return false;
     }
-
-    if (selectedPaymentMethod === 'upi') {
-      const upi = document.getElementById('upiIdInput')?.value.trim();
-      if (!upi) {
-        showPaymentError(true);
-        return false;
-      }
-    }
-
-    if (selectedPaymentMethod === 'card') {
-      const cardName = document.getElementById('cardNameInput')?.value.trim();
-      const cardNumber = document.getElementById('cardNumberInput')?.value.trim();
-      const cardExpiry = document.getElementById('cardExpiryInput')?.value.trim();
-      const cardCvv = document.getElementById('cardCvvInput')?.value.trim();
-      if (!cardName || !cardNumber || !cardExpiry || !cardCvv) {
-        showPaymentError(true);
-        return false;
-      }
-    }
-
-    if (selectedPaymentMethod === 'net') {
-      const bank = document.getElementById('netBankInput')?.value.trim();
-      if (!bank) {
-        showPaymentError(true);
-        return false;
-      }
-    }
-
-    showPaymentError(false);
-    return isValid;
   }
 
-  function placeOrderAnimation() {
-    if (!validateCheckoutForm()) {
+  if (selectedPaymentMethod === 'card') {
+    const cardName = document.getElementById('cardNameInput')?.value.trim();
+    const cardNumber = document.getElementById('cardNumberInput')?.value.trim();
+    const cardExpiry = document.getElementById('cardExpiryInput')?.value.trim();
+    const cardCvv = document.getElementById('cardCvvInput')?.value.trim();
+    if (!cardName || !cardNumber || !cardExpiry || !cardCvv) {
+      showPaymentError(true);
+      return false;
+    }
+  }
+
+  if (selectedPaymentMethod === 'net') {
+    const bank = document.getElementById('netBankInput')?.value.trim();
+    if (!bank) {
+      showPaymentError(true);
+      return false;
+    }
+  }
+
+  showPaymentError(false);
+  return isValid;
+}
+
+// Now actually calls the real backend instead of a fake setTimeout
+async function placeOrderAnimation() {
+  if (!validateCheckoutForm()) {
+    return;
+  }
+
+  const cart = window.CravioCart ? window.CravioCart.getCart() : [];
+  if (!cart.length) {
+    if (window.CravioToast) window.CravioToast('Your cart is empty.', 'error');
+    return;
+  }
+
+  // Guard against items that were added without a real backend productId
+  // (this will happen until restaurant-detail.jsp is wired to real products).
+  const invalidItem = cart.find(item => !item.productId);
+  if (invalidItem) {
+    if (window.CravioToast) window.CravioToast('"' + invalidItem.name + '" is not linked to a real product yet. Cannot place order.', 'error');
+    return;
+  }
+
+  const deliveryAddress = getSelectedAddressText();
+  if (!deliveryAddress) {
+    if (window.CravioToast) window.CravioToast('Please select a delivery address.', 'error');
+    return;
+  }
+
+  const orderPayload = {
+    deliveryAddress: deliveryAddress,
+    paymentMethod: getPaymentMethodLabel(),
+    items: cart.map(item => ({ productId: item.productId, quantity: item.qty }))
+  };
+
+  const btn = document.getElementById('btnPlaceOrder');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Payment...';
+
+  try {
+    const res = await fetch('${pageContext.request.contextPath}/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderPayload)
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      if (window.CravioToast) window.CravioToast(errText || 'Could not place order', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-lock"></i> Place Order';
       return;
     }
 
-    const btn = document.getElementById('btnPlaceOrder');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Payment...';
+    const order = await res.json();
+
+    // Clear the cart now that the real order is saved in the database
+    localStorage.removeItem('cravio_cart_data');
+
+    if (window.CravioToast) window.CravioToast('Order #' + order.id + ' placed successfully!', 'success');
     setTimeout(() => {
-      window.CravioToast('Order placed successfully! Redirecting to live tracking...', 'success');
-      setTimeout(() => {
-        window.location.href = '${pageContext.request.contextPath}/track-order';
-      }, 1200);
-    }, 1500);
+      window.location.href = '${pageContext.request.contextPath}/track-order';
+    }, 1200);
+  } catch (err) {
+    if (window.CravioToast) window.CravioToast('Unable to reach server. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-lock"></i> Place Order';
   }
+}
 
-  document.addEventListener('DOMContentLoaded', () => {
-    renderCheckoutAddresses();
-    if (window.CravioAuth && window.CravioAuth.getAddresses) {
-      window.addEventListener('cravio:addresses-updated', renderCheckoutAddresses);
-    }
-  });
+document.addEventListener('DOMContentLoaded', () => {
+  renderCheckoutAddresses();
+  renderCheckoutItems();
+  if (window.CravioAuth && window.CravioAuth.getAddresses) {
+    window.addEventListener('cravio:addresses-updated', renderCheckoutAddresses);
+  }
+});
 
-  window.renderCheckoutAddresses = renderCheckoutAddresses;
+window.renderCheckoutAddresses = renderCheckoutAddresses;
 </script>
+
