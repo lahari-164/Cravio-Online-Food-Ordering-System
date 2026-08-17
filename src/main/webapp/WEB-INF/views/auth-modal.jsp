@@ -18,10 +18,15 @@
     </div>
 
     <%-- LOGIN FORM --%>
-    <form id="formLogin" style="display: block;">
+    <form id="formLogin" style="display: block;" autocomplete="off">
       <div class="form-group">
         <label class="form-label">Email Address or Phone</label>
-        <input type="email" class="form-input" placeholder="e.g. rohan.sharma@example.com" value="rohan.sharma@example.com" required>
+        <input
+          type="email"
+          class="form-input"
+          placeholder="e.g. rohan.sharma@example.com"
+          autocomplete="off"
+          required>
       </div>
 
       <div class="form-group">
@@ -29,35 +34,64 @@
           <label class="form-label">Password</label>
           <a href="#" style="font-size: 0.8rem; color: var(--primary);">Forgot?</a>
         </div>
-        <input type="password" class="form-input" placeholder="••••••••" value="password123" required>
+        <input
+          type="password"
+          class="form-input"
+          placeholder="••••••••"
+          autocomplete="new-password"
+          required>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">Login & Continue <i class="fa-solid fa-arrow-right"></i></button>
+      <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
+        Login & Continue <i class="fa-solid fa-arrow-right"></i>
+      </button>
     </form>
 
     <%-- SIGN UP FORM --%>
-    <form id="formSignup" style="display: none;">
+    <form id="formSignup" style="display: none;" autocomplete="off">
       <div class="form-group">
         <label class="form-label">Full Name</label>
-        <input type="text" class="form-input" placeholder="e.g. Rahul Sharma" value="Rahul Sharma" required>
+        <input
+          type="text"
+          class="form-input"
+          placeholder="e.g. Rahul Sharma"
+          autocomplete="off"
+          required>
       </div>
 
       <div class="form-group">
         <label class="form-label">Email Address</label>
-        <input type="email" class="form-input" placeholder="rahul@example.com" value="rahul.sharma@example.com" required>
+        <input
+          type="email"
+          class="form-input"
+          placeholder="rahul@example.com"
+          autocomplete="off"
+          required>
       </div>
 
       <div class="form-group">
         <label class="form-label">Mobile Phone Number</label>
-        <input type="tel" class="form-input" placeholder="+91 98765 43210" value="+91 98765 43210" required>
+        <input
+          type="tel"
+          class="form-input"
+          placeholder="+91 98765 43210"
+          autocomplete="off"
+          required>
       </div>
 
       <div class="form-group">
         <label class="form-label">Create Password</label>
-        <input type="password" class="form-input" placeholder="••••••••" value="password123" required>
+        <input
+          type="password"
+          class="form-input"
+          placeholder="••••••••"
+          autocomplete="new-password"
+          required>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">Create Account & Login <i class="fa-solid fa-arrow-right"></i></button>
+      <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
+        Create Account & Login <i class="fa-solid fa-arrow-right"></i>
+      </button>
     </form>
   </div>
 </div>
